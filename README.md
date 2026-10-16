@@ -1,5 +1,7 @@
 # Welches Verfahren, gemessen woran? – Streamlit-Demo
 
+**[→ Demo live ausprobieren](https://sebastianhanisch-rating-vergleich-demo.streamlit.app/)**
+
 Sechzehntes und **letztes Stück der Ranking-Linie** (Konzepte-Demo), Nachfolger der Rating-Stücke (`siegtabelle-demo`, `massey-colley-demo`, `bradley-terry-demo`, `elo-demo`,
 `glicko-trueskill-demo`, `whr-demo`) und von `bewerter-demo`: Die Verfahren der Linie werden an den **Folgepartien** geprüft, nach **Log-Verlust**, **Kalibrierung** und **Rangkorrelation**,
 im **Rolling-Origin-Protokoll** und gegen das **Orakel** (die wahren Wahrscheinlichkeiten). Gemessen wird, **ob Rangkorrelation und Vorhersagegüte denselben Sieger nennen**, **wann das
@@ -141,4 +143,4 @@ Gebaut mit Streamlit, Plotly, numpy, pandas und fpdf2.
 
 ---
 
-Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zu den Demos: [Interaktive Demos](https://sebastianhanisch.net/demos.html).
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Ranking: von der Siegtabelle bis Learning to Rank](https://sebastianhanisch.net/konzepte-ranking.html).
