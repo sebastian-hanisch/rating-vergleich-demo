@@ -60,10 +60,15 @@ def calibration_bins(p, y, bins=C.CAL_BINS) -> list:
 
 
 def kendall_tau(a, b) -> float:
-    """τ_a der Ordnungen von a und b (Gleichstände zählen 0)."""
+    """τ_a der Ordnungen von a und b (Gleichstände zählen 0; Werte, die sich nur durch Rundungsreste unterscheiden, gelten als gleich)."""
     a, b = np.asarray(a, dtype=float), np.asarray(b, dtype=float)
     iu = np.triu_indices(len(a), 1)
-    return float(np.mean(np.sign(a[iu[0]] - a[iu[1]]) * np.sign(b[iu[0]] - b[iu[1]])))
+
+    def order(x):
+        d = x[iu[0]] - x[iu[1]]
+        return np.where(np.abs(d) <= 1e-12 * (1.0 + np.abs(x).max()), 0.0, np.sign(d))
+
+    return float(np.mean(order(a) * order(b)))
 
 
 def paired_difference(a, b) -> tuple:

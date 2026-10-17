@@ -64,6 +64,8 @@ Alle Zahlen: 60 feste Saisons, 12 Spieler, 120 Runden, Vorlauf 20; Log-Verlust (
 
 ## Befunde und Korrekturen gegenüber dem Plan
 
+- **Korrektur 2026-10-17 (Eigenschaftstest):** Kendall τ zählte numerisch gleiche Wertungen (Colley oder Bradley-Terry mit gleichen Werten bis auf Rundungsreste) je nach Nummerierung als ±1 statt als Gleichstand 0; τ wich dadurch pro Runde um bis zu 2/28 ab, die Vorhersagen waren gleich. Jetzt gelten Unterschiede unter 1e-12 als Gleichstand (Regressionstest `test_kendall_tau_treats_values_that_differ_only_by_rounding_as_ties`). **Alle Zahlen dieser README blieben innerhalb der Toleranz der Claims-Tests unverändert.**
+
 - **Colley ist nicht schlechter, sondern ohne Drift vorn:** Die Vorab-Messung kalibrierte die Skala mit der Wertung **nach** der laufenden Runde (ein Leck in die andere Richtung: schlechte Skala).
   Mit der Wertung vor der Runde liegt Colley bei 0,525 (Siegquote 0,527). Der Kontrast „höchstes τ, aber schlechterer Log-Verlust“ steht deshalb bei **Elo K = 0,12 gegen 0,4 unter Drift**, nicht bei
   Colley.
