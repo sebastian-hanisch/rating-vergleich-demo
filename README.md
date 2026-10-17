@@ -11,11 +11,11 @@ neutrale, simulierte Turnier der Wurzel (Stärken aus dem Generator Version 1, w
 ## Kernfrage
 
 Welches Verfahren ist das beste, und woran sieht man es? **Nicht an der Rangkorrelation allein.** 12 Spieler, 120 Runden, Vorlauf 20, starker Drift (σ = 0,12 je Runde): **Elo mit K = 0,12**
-hat das höchste τ (0,764), aber **Elo mit K = 0,4** den kleinsten Log-Verlust (0,504 gegen 0,514); K = 0,12 ist zu vorsichtig (Kalibrierungssteigung 1,40). Die Reihenfolgen der sechs Verfahren
-nach τ und nach Log-Verlust stimmen nur zu 0,60 überein. **Das fortschreibende Verfahren lohnt nur bei Drift:** mit σ = 0,12 schlagen Elo K = 0,4 (0,504) und Bradley-Terry mit Vergessen
-(0,504) den kumulativen Bradley-Terry (0,519) und die Siegquote (0,521) um 0,015 bis 0,017 (gepaart, Standardfehler 0,001 bis 0,002); ohne Drift kostet Elo K = 0,4 dagegen 0,020 gegen die
-Siegquote, und **Colley** (kalibriert) liegt mit 0,525 vorn. **Das Protokoll zählt so viel wie das Verfahren:** Dieselbe Bradley-Terry-Schätzung sieht mit einer Zufallsaufteilung
-**0,008** (ohne Drift) bis **0,015** (σ = 0,12) besser aus, als sie im Rolling-Origin-Protokoll vorhersagt. Und das **Orakel** (0,509 ohne Drift, 0,456 bei σ = 0,12) zeigt, wie viel kein
+hat nominell das höchste τ (0,764), aber **Elo mit K = 0,4** (τ 0,760) und BT mit Vergessen (0,759) liegen im τ praktisch gleichauf und haben den kleinsten Log-Verlust (je 0,504 gegen 0,514 bei K = 0,12); K = 0,12 ist zu vorsichtig (Kalibrierungssteigung 1,40). Die Reihenfolgen der sechs Verfahren
+nach τ und nach Log-Verlust stimmen in 12 von 15 Paaren überein (Kendall-τ 0,60; fast alle abweichenden Paare sind im τ Beinahe-Gleichstände). **Das fortschreibende Verfahren lohnt erst bei starkem Drift:** mit σ = 0,12 schlagen Elo K = 0,4 (0,504) und Bradley-Terry mit Vergessen
+(0,504) den kumulativen Bradley-Terry (0,519) und die Siegquote (0,521) um 0,014 bis 0,017 (gepaart, Standardfehler 0,001 bis 0,002); ohne Drift kostet Elo K = 0,4 dagegen 0,020 gegen die
+Siegquote, und **Colley** (kalibriert) liegt mit 0,525 vorn. **Das Protokoll kann so viel verschieben wie ein Wechsel des Verfahrens (0,008 bis 0,015 Log-Verlust):** Bradley-Terry sieht mit einer Zufallsaufteilung (70/30)
+**0,008** (ohne Drift, nicht klar von null verschieden) bis **0,015** (σ = 0,12) besser aus, als es im Rolling-Origin-Protokoll vorhersagt; ein Teil davon ist die größere Trainingsmenge. Und das **Orakel** (0,509 ohne Drift, 0,456 bei σ = 0,12) zeigt, wie viel kein
 Verfahren holen kann.
 
 ## Modell
@@ -55,22 +55,22 @@ Alle Zahlen: 60 feste Saisons, 12 Spieler, 120 Runden, Vorlauf 20; Log-Verlust (
 
 | Frage | Befund | Test |
 |---|---|---|
-| Rangkorrelation gegen Vorhersage (σ = 0,12) | τ-bester **Elo K = 0,12** (0,764), Log-Verlust-bester **Elo K = 0,4** (0,504; K = 0,12: 0,514); Übereinstimmung der Reihenfolgen τ gegen Log-Verlust 0,60 (ohne Drift 0,73). | `test_rank_correlation_and_prediction_name_different_winners` |
+| Rangkorrelation gegen Vorhersage (σ = 0,12) | τ: **Elo K = 0,12** (0,764), Elo K = 0,4 (0,760) und BT mit Vergessen (0,759) praktisch gleich; Log-Verlust: **Elo K = 0,4** und BT mit Vergessen vorn (je 0,504; K = 0,12: 0,514); die Reihenfolgen τ gegen Log-Verlust stimmen in 12 von 15 Paaren überein (Kendall-τ 0,60; ohne Drift 13 von 15, 0,73). | `test_rank_correlation_and_prediction_name_different_winners` |
 | Drift: fortschreibend gegen kumulativ | σ = 0,12: Elo K = 0,4 und BT mit Vergessen **−0,017 / −0,016** gegen die Siegquote (Standardfehler 0,002 / 0,001); σ = 0: Elo K = 0,4 **+0,020**, Colley −0,002 (Standardfehler 0,0004), Bradley-Terry −0,0002 (kein Unterschied). | `test_without_drift_the_cumulative_methods_win_and_with_drift_the_updating_ones`, `test_paired_differences_and_the_oracle` |
 | Kalibrierung (σ = 0,05) | Steigung: Elo K = 0,12 **1,28** (zu vorsichtig), Colley 1,11, Siegquote 1,01, Bradley-Terry 0,89, BT mit Vergessen 0,89, Elo K = 0,4 **0,81** (zu mutig). | `test_calibration_slopes` |
 | Protokoll: Bradley-Terry, Rolling-Origin gegen Zufallsaufteilung 70/30 | σ = 0: 0,527 gegen **0,519** (0,008 zu gut, Standardfehler 0,005); σ = 0,12: 0,519 gegen **0,504** (0,015, Standardfehler 0,004). | `test_random_split_is_too_optimistic` |
-| Kosten (Rechenzeit je Runde, 12 Spieler) | Bradley-Terry rund das Zehnfache von Colley und von Elo (Größenordnung 0,1 bis 1 ms gegen 0,01 bis 0,1 ms je nach Rechner; Colley und Elo liegen dicht beieinander; testgesichert ist nur, dass Bradley-Terry mehr als das Dreifache braucht); der Gewinn bei Drift: BT mit Vergessen 0,015 gegen kumulativ, Elo K = 0,4 0,015 mit dem Bruchteil der Rechnung. | `test_cost_order` |
+| Kosten (Rechenzeit je Runde, 12 Spieler) | Bradley-Terry braucht ein Mehrfaches der Rechenzeit von Colley und Elo (in einer Messung das 17- bis 36-Fache; Größenordnung 0,1 bis 1 ms gegen 0,01 bis 0,1 ms je nach Rechner; Colley und Elo liegen in derselben Größenordnung; testgesichert ist nur, dass Bradley-Terry mehr als das Dreifache braucht); der Gewinn bei Drift: BT mit Vergessen 0,014 gegen kumulativ, Elo K = 0,4 0,015 mit dem Bruchteil der Rechnung. | `test_cost_order` |
 | Verdikte nennen dieselben Zahlen | Die live berechneten Texte der App geben die obigen Werte wieder. | `test_verdicts_quote_the_measured_numbers` |
 
 ## Befunde und Korrekturen gegenüber dem Plan
 
-- **Korrektur 2026-10-17 (Eigenschaftstest):** Kendall τ zählte numerisch gleiche Wertungen (Colley oder Bradley-Terry mit gleichen Werten bis auf Rundungsreste) je nach Nummerierung als ±1 statt als Gleichstand 0; τ wich dadurch pro Runde um bis zu 2/28 ab, die Vorhersagen waren gleich. Jetzt gelten Unterschiede unter 1e-12 als Gleichstand (Regressionstest `test_kendall_tau_treats_values_that_differ_only_by_rounding_as_ties`). **Alle Zahlen dieser README blieben innerhalb der Toleranz der Claims-Tests unverändert.**
+- **Korrektur 2026-10-17 (Eigenschaftstest):** Kendall τ zählte numerisch gleiche Wertungen (Colley oder Bradley-Terry mit gleichen Werten bis auf Rundungsreste) je nach Nummerierung als ±1 statt als Gleichstand 0; τ wich dadurch pro Runde ab, die Vorhersagen waren gleich. Jetzt gelten Unterschiede unter 1e-12 als Gleichstand (Regressionstest `test_kendall_tau_treats_values_that_differ_only_by_rounding_as_ties`). **Alle Zahlen dieser README blieben innerhalb der Toleranz der Claims-Tests unverändert.**
 
 - **Colley ist nicht schlechter, sondern ohne Drift vorn:** Die Vorab-Messung kalibrierte die Skala mit der Wertung **nach** der laufenden Runde (ein Leck in die andere Richtung: schlechte Skala).
   Mit der Wertung vor der Runde liegt Colley bei 0,525 (Siegquote 0,527). Der Kontrast „höchstes τ, aber schlechterer Log-Verlust“ steht deshalb bei **Elo K = 0,12 gegen 0,4 unter Drift**, nicht bei
   Colley.
 - **Zufallsaufteilung:** 0,008 / 0,015 statt 0,005 / 0,011 (60 statt 20 Läufe); mit dem Zusatz, dass ein Teil davon die größere Trainingsmenge ist, nicht nur das Leck.
-- **Bradley-Terry ist nicht besser als die Siegquote:** ohne Drift −0,0002 (Standardfehler 0,0005); unter starkem Drift −0,002 (Standardfehler 0,001): im Rauschen. Die Vorab-Aussage „BT
+- **Bradley-Terry ist praktisch nicht besser als die Siegquote:** ohne Drift −0,0002 (Standardfehler 0,0005); unter starkem Drift −0,002 (Standardfehler 0,001, also 2 Standardfehler, aber praktisch winzig); bei wenig Daten (50 Runden, σ = 0) ist Bradley-Terry sogar schlechter (+0,007, Standardfehler 0,001). Die Vorab-Aussage „BT
   gleich Siegquote“ bleibt.
 - **Die Unterschiede sind klein:** Zwischen Siegquote, Colley und Bradley-Terry liegen 0,001 bis 0,003 Log-Verlust; erst Drift und die Elo-Wahl trennen deutlich (0,01 bis 0,02).
 
@@ -107,7 +107,7 @@ Alle Zahlen: 60 feste Saisons, 12 Spieler, 120 Runden, Vorlauf 20; Log-Verlust (
 
 ## Tests
 
-89 Tests, einige Minuten (die Experimente rechnen über 60 feste Saisons): Einheiten gegen Handwerte (`test_methods.py`: Siegquote, Colley, Bradley-Terry, Elo, Vergessen, kein Blick in die
+112 Tests, einige Minuten (die Experimente rechnen über 60 feste Saisons): Einheiten gegen Handwerte (`test_methods.py`: Siegquote, Colley, Bradley-Terry, Elo, Vergessen, kein Blick in die
 Zukunft; `test_metrics.py`: Log-Verlust, Brier, Steigung, Klassen, τ, gepaarte Differenz; `test_scenario.py`: Paarung, Wahrscheinlichkeiten, Drift, Ströme), Generator (`test_generator.py`,
 wortgleich), **Orakel** (`test_oracle_rating_vergleich.py`: Bradley-Terry gegen den BFGS von scipy, Colley gegen ein unabhängig aufgestelltes Gleichungssystem, Maße gegen skalare Schleifen und
 `scipy.stats.kendalltau`, Eigenschaften über Saisons: Orakel vorn, Drift kehrt die Reihenfolge um, Zufallsaufteilung zu optimistisch), Maße und Verdikte (`test_evaluation.py`), alle Zahlen dieses

@@ -185,14 +185,28 @@ def order_agreement(cell: dict) -> float:
     return MT.kendall_tau([cell[m]["tau"] for m in C.METHODS], [-cell[m]["ll"] for m in C.METHODS])
 
 
+def order_agreement_pairs(cell: dict) -> tuple:
+    """Zahl der Verfahrenspaare, die nach τ und nach Log-Verlust gleich geordnet sind, und Zahl aller Paare."""
+    t = [cell[m]["tau"] for m in C.METHODS]
+    l = [-cell[m]["ll"] for m in C.METHODS]
+    n = len(t)
+    agree = sum(1 for i in range(n) for j in range(i + 1, n) if (t[i] - t[j]) * (l[i] - l[j]) > 0)
+    return agree, n * (n - 1) // 2
+
+
 def verdict_rank_vs_prediction(e):
     c = e[0.12]
-    top_tau = max(C.METHODS, key=lambda m: c[m]["tau"])
-    best = min(C.METHODS, key=lambda m: c[m]["ll"])
+    by_tau = sorted(C.METHODS, key=lambda m: -c[m]["tau"])
+    by_ll = sorted(C.METHODS, key=lambda m: c[m]["ll"])
+    top_tau, best = by_tau[0], by_ll[0]
     gap = c[top_tau]["ll"] - c[best]["ll"]
+    agree, pairs = order_agreement_pairs(c)
+    agree0 = order_agreement_pairs(e[0.0])[0]
     return "warning", (f"Bei starkem Drift (σ = 0,12) hat **{top_tau}** die höchste Rangkorrelation (τ {de(c[top_tau]['tau'], 3)}), den kleinsten Log-Verlust hat **{best}** ({de(c[best]['ll'], 3)}); "
-                       f"das τ-beste Verfahren liegt im Log-Verlust {de(gap, 3)} dahinter (Steigung {de(c[top_tau]['slope'])}). Die Reihenfolgen der sechs Verfahren nach τ und nach Log-Verlust "
-                       f"stimmen nur zu {de(order_agreement(c))} überein (ohne Drift {de(order_agreement(e[0.0]))}). Wer nur die Rangfolge prüft, sieht die Wahrscheinlichkeiten nicht.")
+                       f"als Zweite folgen {by_tau[1]} (τ {de(c[by_tau[1]]['tau'], 3)}) bzw. {by_ll[1]} ({de(c[by_ll[1]]['ll'], 3)}). "
+                       f"Das τ-beste Verfahren liegt im Log-Verlust {de(gap, 3)} dahinter (Steigung {de(c[top_tau]['slope'])}). Die Reihenfolgen der sechs Verfahren nach τ und nach Log-Verlust "
+                       f"stimmen in {agree} von {pairs} Paaren überein (Kendall-τ {de(order_agreement(c))}; ohne Drift {agree0} von {pairs}, {de(order_agreement(e[0.0]))}). "
+                       "Wer nur die Rangfolge prüft, sieht die Wahrscheinlichkeiten nicht.")
 
 
 def verdict_drift(e):
@@ -202,7 +216,7 @@ def verdict_drift(e):
     return "info", (f"Mit starkem Drift (σ = 0,12 je Runde) hat **{best1}** den kleinsten Log-Verlust ({de(c1[best1]['ll'], 3)}); kumulativer Bradley-Terry {de(c1['Bradley-Terry']['ll'], 3)}, "
                     f"Siegquote {de(c1[C.REFERENCE]['ll'], 3)}, Elo K=0,4 {de(c1['Elo K=0,4']['ll'], 3)}, BT mit Vergessen {de(c1['BT mit Vergessen']['ll'], 3)}. Ohne Drift liegt **{best0}** "
                     f"vorn ({de(c0[best0]['ll'], 3)}), Elo K=0,4 bei {de(c0['Elo K=0,4']['ll'], 3)} und BT mit Vergessen bei {de(c0['BT mit Vergessen']['ll'], 3)}: "
-                    "Das fortschreibende Verfahren lohnt nur bei Drift.")
+                    "Das fortschreibende Verfahren lohnt erst bei starkem Drift, nicht ohne und noch nicht bei mäßigem Drift (σ = 0,05).")
 
 
 def verdict_calibration(e):

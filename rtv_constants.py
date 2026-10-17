@@ -34,7 +34,7 @@ PRESETS = {
 }
 PRESET_HELP = {
     "Mit Drift": "12 Spieler, 120 Runden, die Stärken wandern mäßig: Alle Verfahren liegen dicht beieinander, das Orakel (wahre Wahrscheinlichkeiten) davor.",
-    "Ohne Drift": "Die Stärken bleiben fest: Das kumulative Bradley-Terry und die Siegquote sind vorn, Elo mit großem K verschenkt Genauigkeit.",
+    "Ohne Drift": "Die Stärken bleiben fest: Die kumulativen Verfahren (Colley, Bradley-Terry, Siegquote) sind vorn, Elo mit großem K verschenkt Genauigkeit.",
     "Starker Drift": "Die Stärken wandern stark: Elo mit großem K und Bradley-Terry mit Vergessen holen auf, die kumulativen Verfahren hängen zurück.",
-    "Wenig Daten": "Nur 50 Runden und 10 Runden Vorlauf: Die Verfahren unterscheiden sich kaum, die Unsicherheit der Differenzen ist groß.",
+    "Wenig Daten": "Nur 50 Runden und 10 Runden Vorlauf: Im Mittel liegen Bradley-Terry und Elo mit kleinem K hinter Colley und der Siegquote, die Unterschiede sind größer als bei 120 Runden.",
 }
