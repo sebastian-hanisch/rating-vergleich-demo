@@ -88,17 +88,20 @@ Alle Zahlen: 60 feste Saisons, 12 Spieler, 120 Runden, Vorlauf 20; Log-Verlust (
 - **Ein Drift-Modell, ein Spielplan, 12 Spieler:** Sprünge, Neulinge, Abgänge und ungleiche Aktivität sind nicht gemessen.
 - **Parameter fest:** K, Halbwertszeit und λ sind feste Werte; das beste K hängt vom Drift (Stück „Elo“).
 - **Log-Verlust ist ein Maß unter mehreren:** Für Entscheidungen können andere Maße zählen.
+- **Brier-Wert dichotom:** Die Demo rechnet den Brier-Wert in der dichotomen Form (Gneiting und Raftery 2007, Tabelle 1); Brier 1950 summiert über beide Klassen, sein Wert liegt bei zwei Klassen beim genau Doppelten.
+- **Platt-Skalierung einparametrig:** Colley wird mit der Steigung κ ohne Achsenabschnitt kalibriert (`platt_scale`); Platt 1999 fittet zwei Parameter, Steigung und Achsenabschnitt.
+- **Zufallsaufteilung ist eigene Messung:** Bergmeir und Benítez tragen nur den Begriff Rolling-Origin; ihre Studie fand für stationäre Reihen keine praktischen Folgen der Zufallsaufteilung und empfiehlt geblockte Kreuzvalidierung. Der Befund hier (0,008 ohne Drift, 0,015 bei σ = 0,12) ist eine eigene Messung an simulierten Saisons, vor allem im Drift-Fall, und stammt nicht aus dieser Quelle.
 - **Nur Sieg und Niederlage, gleichabständige Anfangsstärken.**
 - **Alles simuliert:** keine Aussage über einen Sport oder eine Plattform.
 
 ## Quellen
 
-- Brier, G. W. (1950): Verification of forecasts expressed in terms of probability. *Monthly Weather Review* 78, 1–3 (nicht eingesehen).
-- Gneiting, T., Raftery, A. E. (2007): Strictly proper scoring rules, prediction, and estimation. *Journal of the American Statistical Association* 102, 359–378 (nicht eingesehen).
-- Platt, J. (1999): Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In: *Advances in Large Margin Classifiers* (nicht eingesehen).
-- Niculescu-Mizil, A., Caruana, R. (2005): Predicting good probabilities with supervised learning. *ICML 2005* (nicht eingesehen).
-- Bergmeir, C., Benítez, J. M. (2012): On the use of cross-validation for time series predictor evaluation. *Information Sciences* 191, 192–213 (nicht eingesehen).
-- Elo, A. E. (1978): *The Rating of Chessplayers, Past and Present* (nicht eingesehen).
+- Brier, G. W. (1950): Verification of forecasts expressed in terms of probability. *Monthly Weather Review* 78, 1–3 (eingesehen 2026-10-17, S. 1–2: Gl. (2) und Beispiel mit Tabelle 1; Brier summiert über beide Klassen und liegt bei zwei Klassen beim genau Doppelten des binären Werts der Demo).
+- Gneiting, T., Raftery, A. E. (2007): Strictly proper scoring rules, prediction, and estimation. *Journal of the American Statistical Association* 102, 359–378 (eingesehen 2026-10-17: Beispiel 1 S. 363, Tabelle 1 S. 365).
+- Platt, J. (1999): Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In: *Advances in Large Margin Classifiers* (eingesehen 2026-10-17 in der Fassung vom 26. März 1999, Abschnitt 2.1, Gl. (9); dort zwei Parameter, die Demo fittet nur die Steigung, siehe Ehrliche Grenzen).
+- Niculescu-Mizil, A., Caruana, R. (2005): Predicting good probabilities with supervised learning. *ICML 2005* (eingesehen 2026-10-17: Abschnitt 2.1, Gl. (1)–(4), und Abschnitt 4, Zuverlässigkeitsdiagramme).
+- Bergmeir, C., Benítez, J. M. (2012): On the use of cross-validation for time series predictor evaluation. *Information Sciences* 191, 192–213 (eingesehen 2026-10-17 im Abdruck der Zeitschriftenfassung in Bergmeirs Dissertation, Granada 2013, Abschnitt 2.1.1; die Quelle trägt den Begriff Rolling-Origin, nicht den Befund zur Zufallsaufteilung, der eine eigene Messung im Drift-Fall ist).
+- Elo, A. E. (1978): *The Rating of Chessplayers, Past and Present* (eingesehen 2026-10-17 in der 2. Auflage 1986, Tabelle 2.11 S. 19 und Abschnitt 8.4 mit Tabelle 8.46 S. 147–149; die Auflage von 1978 selbst nicht. Elos Erwartungstabelle 2.11 beruht auf der Normalverteilung, die logistische Fassung steht in Abschnitt 8.4 (Tabelle 8.46); die Demo rechnet logistisch).
 - Steele, G. L., Lea, D., Flood, C. H. (2014): Fast splittable pseudorandom number generators. *OOPSLA 2014*, 453–472 (Zufallsstrom des Generators).
 - **Nicht herangezogen:** die Dokumentationen der Rating-Verfahren der Linie (Glicko, TrueSkill, WHR); die Zahlen dieser Demo sind Simulation.
 

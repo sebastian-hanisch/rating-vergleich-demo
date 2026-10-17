@@ -217,26 +217,26 @@ höchstens einmal; $P(i \text{ schlägt } j) = \sigma\bigl(s_i(t) - s_j(t)\bigr)
 
 **Verfahren** (Zustand vor der Runde $t$):
 - *Siegquote:* $q_i = (w_i + 1)/(g_i + 2)$; $P_{ij} = \dfrac{q_i(1 - q_j)}{q_i(1 - q_j) + q_j(1 - q_i)}$.
-- *Colley:* löst $(2I + \operatorname{diag}(g) - G)\,r = 1 + (w - \ell)/2$; $P_{ij} = \sigma(\kappa\,(r_i - r_j))$, $\kappa$ aus der Logistik der Ausgänge der Runden $< t$ auf die Differenzen der Wertungen vor der jeweiligen Runde.
+- *Colley:* löst $(2I + \operatorname{diag}(g) - G)\,r = 1 + (w - \ell)/2$; $P_{ij} = \sigma(\kappa\,(r_i - r_j))$, $\kappa$ aus der Logistik der Ausgänge der Runden $< t$ auf die Differenzen der Wertungen vor der jeweiligen Runde (einparametrige Variante der Platt-Skalierung, ohne Achsenabschnitt).
 - *Bradley-Terry:* $\hat s = \arg\max \sum W_{ij}\ln\sigma(s_i - s_j) - \tfrac{\lambda}{2}\lVert s\rVert^2$, $\lambda = 0{,}1$, kumulativ, vier gedämpfte Newton-Schritte je Runde.
 - *Elo:* $s_i \mathrel{+}= K(y - p)$, $s_j \mathrel{-}= K(y - p)$ mit $K \in \{0{,}12;\ 0{,}4\}$ (logistische Einheiten).
 - *BT mit Vergessen:* Bradley-Terry mit Gewichten $0{,}5^{\text{Alter}/h}$ auf die Partien, $h$ die Halbwertszeit.
 
-**Maße** (über die Partien ab dem Vorlauf). *Log-Verlust:* $-\tfrac1N\sum[y\ln p + (1-y)\ln(1-p)]$ (Vorhersagen auf $[10^{-4}, 1 - 10^{-4}]$). *Brier:* $\tfrac1N\sum(p - y)^2$.
+**Maße** (über die Partien ab dem Vorlauf). *Log-Verlust:* $-\tfrac1N\sum[y\ln p + (1-y)\ln(1-p)]$ (Vorhersagen auf $[10^{-4}, 1 - 10^{-4}]$). *Brier:* $\tfrac1N\sum(p - y)^2$ (dichotome Form, Gneiting/Raftery 2007, Tabelle 1; Brier 1950 summiert über beide Klassen und liegt bei genau dem Doppelten).
 *Steigung:* $\kappa$ der Logistik $y \sim \sigma(\kappa\,\operatorname{logit} p)$. *τ:* $\tfrac{1}{\binom n2}\sum_{i<j}\operatorname{sgn}(\hat r_i - \hat r_j)\operatorname{sgn}(s_i - s_j)$ gegen die wahren Stärken der Runde.
 *Orakel:* $p$ = wahre Wahrscheinlichkeit. *Gepaarte Differenz:* Mittel über die Saisons von $LL_m - LL_{\text{Siegquote}}$, Standardfehler $\operatorname{sd}/\sqrt{60}$.
 
-**Protokolle.** *Rolling-Origin:* Vorhersage vor dem Einlesen der Runde. *Zufallsaufteilung:* 70 % aller Partien der Saison (auch der späteren) zum Anpassen, 30 % zum Prüfen.
+**Protokolle.** *Rolling-Origin:* Vorhersage vor dem Einlesen der Runde. *Zufallsaufteilung:* 70 % aller Partien der Saison (auch der späteren) zum Anpassen, 30 % zum Prüfen. Die Literatur (Bergmeir/Benítez 2012) trägt den Begriff Rolling-Origin; der Befund zur Zufallsaufteilung ist eine eigene Messung der Demo.
 
 **Zufall.** SplitMix64-Strom des Generators (Box-Muller für die Drift); je Runde ein eigener Strom aus (Seed, Rundennummer).
 
 **Literatur.**
-- Brier, G. W. (1950): Verification of forecasts expressed in terms of probability. *Monthly Weather Review* 78, 1–3 (nicht eingesehen).
-- Gneiting, T., Raftery, A. E. (2007): Strictly proper scoring rules, prediction, and estimation. *Journal of the American Statistical Association* 102, 359–378 (nicht eingesehen).
-- Platt, J. (1999): Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In: *Advances in Large Margin Classifiers* (nicht eingesehen).
-- Niculescu-Mizil, A., Caruana, R. (2005): Predicting good probabilities with supervised learning. *ICML 2005* (nicht eingesehen).
-- Bergmeir, C., Benítez, J. M. (2012): On the use of cross-validation for time series predictor evaluation. *Information Sciences* 191, 192–213 (nicht eingesehen).
-- Elo, A. E. (1978): *The Rating of Chessplayers, Past and Present* (nicht eingesehen).
+- Brier, G. W. (1950): Verification of forecasts expressed in terms of probability. *Monthly Weather Review* 78, 1–3 (eingesehen 2026-10-17, S. 1–2: Gl. (2) und Beispiel mit Tabelle 1; Brier summiert über beide Klassen und liegt bei zwei Klassen beim genau Doppelten des binären Werts der Demo).
+- Gneiting, T., Raftery, A. E. (2007): Strictly proper scoring rules, prediction, and estimation. *Journal of the American Statistical Association* 102, 359–378 (eingesehen 2026-10-17: Beispiel 1 S. 363, Tabelle 1 S. 365).
+- Platt, J. (1999): Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In: *Advances in Large Margin Classifiers* (eingesehen 2026-10-17 in der Fassung vom 26. März 1999, Abschnitt 2.1, Gl. (9); dort zwei Parameter, die Demo fittet nur die Steigung).
+- Niculescu-Mizil, A., Caruana, R. (2005): Predicting good probabilities with supervised learning. *ICML 2005* (eingesehen 2026-10-17: Abschnitt 2.1, Gl. (1)–(4), und Abschnitt 4, Zuverlässigkeitsdiagramme).
+- Bergmeir, C., Benítez, J. M. (2012): On the use of cross-validation for time series predictor evaluation. *Information Sciences* 191, 192–213 (eingesehen 2026-10-17 im Abdruck der Zeitschriftenfassung in Bergmeirs Dissertation, Granada 2013, Abschnitt 2.1.1; die Quelle trägt den Begriff Rolling-Origin, nicht den Befund zur Zufallsaufteilung, der eine eigene Messung im Drift-Fall ist).
+- Elo, A. E. (1978): *The Rating of Chessplayers, Past and Present* (eingesehen 2026-10-17 in der 2. Auflage 1986, Tabelle 2.11 S. 19 und Abschnitt 8.4 mit Tabelle 8.46 S. 147–149; die Auflage von 1978 selbst nicht. Elos Erwartungstabelle 2.11 beruht auf der Normalverteilung, die logistische Fassung steht in Abschnitt 8.4 (Tabelle 8.46); die Demo rechnet logistisch).
 - Steele, G. L., Lea, D., Flood, C. H. (2014): Fast splittable pseudorandom number generators. *OOPSLA 2014*, 453–472 (Zufallsstrom des Generators).
         """
     )

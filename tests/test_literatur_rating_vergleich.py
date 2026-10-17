@@ -21,8 +21,20 @@ Alle Werte stammen aus Quellen, die am 2026-10-17 tatsächlich abgerufen wurden:
     C>D>A>B>E hat 4 diskordante Paare von 10, normiert 0,4. Daraus (nicht in der Quelle ausgeschrieben): tau_a = 1 - 2 * 0,4 = 0,2 (6 konkordante, 4 diskordante
     Paare, ohne Gleichstände).
 
-NICHT eingesehen (daher kein Test, siehe Bericht "offen"): Brier 1950 (Monthly Weather Review 78, 1-3), Gneiting/Raftery 2007 (JASA 102, 359-378; keine
-Zahlenwerte abgerufen), Platt 1999, Niculescu-Mizil/Caruana 2005, Bergmeir/Benitez 2012, Elo 1978 (Buch).
+(e) Brier, G. W. (1950): Verification of forecasts expressed in terms of probability, Monthly Weather Review 78, 1-3 (NOAA-Scan, über eine Archivkopie
+    gelesen 2026-10-17), S. 2: Beispiel Tabelle 1 (10 Vorhersagen Regen/kein Regen, Regenwahrscheinlichkeiten .7, .9, .8, .4, .2, 0, 0, 0, 0, .1; Regen trat bei
+    Vorhersage 2, 3 und 4 ein): P = 0,19. Konstante Vorhersage 0,3 für Regen: P' = 1 - (0,3^2 + 0,7^2) = 0,42; Vorhersage 0,2: 0,44. Brier summiert in Gl. (2) über
+    BEIDE Klassen (Wertebereich 0 bis 2); die Demo rechnet die binäre Form (p - y)^2 und liegt dadurch bei genau der Hälfte der Werte von Brier.
+(f) Gneiting, T., Raftery, A. E. (2007): Strictly proper scoring rules, prediction, and estimation, JASA 102, 359-378 (PDF der Autorenseite, gelesen 2026-10-17),
+    Tabelle 1 (S. 365), Wahrscheinlichkeitsvorhersage eines dichotomen Ereignisses: Brier S(p,1) = -(1-p)^2, S(p,0) = -p^2; logarithmisch S(p,1) = log p,
+    S(p,0) = log(1-p) (Wertungen: höher ist besser; Log-Verlust und Brier der Demo sind die negativen Werte).
+(g) Elo, A. E.: The Rating of Chessplayers, Past and Present, 2. Auflage 1986 (Scan, gelesen 2026-10-17), Tabelle 2.11 "Percentage Expectancy Table" (Normalverteilung,
+    S. 19) und Tabelle 8.46 (logistisch zur Basis sqrt(10), S. 149): Wertungsdifferenz 0-3: .50; 99-106 (normal) bzw. 97-103 (logistisch): .64; um 200: .76;
+    291-302 (normal) bzw. 295-308 (logistisch): .85. Die logistische Tabelle 8.46 entspricht E = 1/(1 + 10^(-D/400)) (Klassenintervall C = 200).
+
+NICHT eingesehen (daher kein Test, siehe Bericht "offen"): Elo 1978 (erste Auflage; gelesen wurde die 2. Auflage 1986). Ohne Zahlenwerte, die die Demo
+reproduzieren kann: Platt 1999 (Gl. (9): P = 1/(1 + exp(A f + B)) mit zwei Parametern; die Demo fittet nur die Steigung), Niculescu-Mizil/Caruana 2005
+(Zuverlässigkeitsdiagramme mit zehn Klassen, die Demo nutzt fünf), Bergmeir/Benitez 2012 (Rolling-Origin-Begriff nach Abschnitt 2.1.1).
 """
 
 import math
@@ -82,3 +94,29 @@ def test_kendall_tau_of_the_height_weight_example_is_0_2():
     weight = [3, 4, 1, 2, 5]          # C>D>A>B>E (A=3, B=4, C=1, D=2, E=5, kleiner = besser)
     # beide Skalen "kleiner = besser": 6 konkordante und 4 diskordante Paare
     assert MT.kendall_tau(height, weight) == pytest.approx(1 - 2 * 0.4)
+
+
+def test_brier_1950_worked_example_scores_nineteen_hundredths_with_the_two_class_sum():
+    # Brier 1950, S. 2, Tabelle 1: Regenwahrscheinlichkeiten und Ausgänge (1 = Regen)
+    p_rain = [0.7, 0.9, 0.8, 0.4, 0.2, 0.0, 0.0, 0.0, 0.0, 0.1]
+    rain = [0, 1, 1, 1, 0, 0, 0, 0, 0, 0]
+    # Brier summiert über beide Klassen; die Demo rechnet nur die Klasse "Regen", das ist genau die Hälfte
+    assert 2 * MT.brier(p_rain, rain) == pytest.approx(0.19, abs=1e-12)        # Brier nennt P = 0,19 (gerundet; die Rechnung ergibt genau 0,19)
+    # konstante Vorhersagen 0,3 (relative Häufigkeit) und 0,2: P' = 0,42 und 0,44 (Gl. (4) und Text)
+    assert 2 * MT.brier([0.3] * 10, rain) == pytest.approx(0.42, abs=1e-12)
+    assert 2 * MT.brier([0.2] * 10, rain) == pytest.approx(0.44, abs=1e-12)
+    assert 2 * MT.brier([0.3] * 10, rain) == pytest.approx(1 - (0.3 ** 2 + 0.7 ** 2), abs=1e-12)
+
+
+def test_gneiting_raftery_table_1_brier_and_logarithmic_scores_of_a_dichotomous_forecast():
+    for p in (0.1, 0.3, 0.8):
+        assert MT.brier([p], [1]) == pytest.approx((1 - p) ** 2, abs=1e-12)
+        assert MT.brier([p], [0]) == pytest.approx(p ** 2, abs=1e-12)
+        assert MT.log_loss([p], [1]) == pytest.approx(-math.log(p), abs=1e-12)
+        assert MT.log_loss([p], [0]) == pytest.approx(-math.log(1 - p), abs=1e-12)
+
+
+def test_elo_book_tables_2_11_and_8_46_at_rating_differences_of_0_100_200_and_300():
+    # Tabelle 2.11 (Normalverteilung) und Tabelle 8.46 (logistisch) der 2. Auflage nennen beide .50, .64, .76 und .85
+    for points, expected in ((0, 0.50), (100, 0.64), (200, 0.76), (300, 0.85)):
+        assert round(float(MT.sigmoid(points * math.log(10) / 400)), 2) == expected
